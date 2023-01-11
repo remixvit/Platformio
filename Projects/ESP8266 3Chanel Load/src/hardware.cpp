@@ -1,22 +1,35 @@
 #include <project.h>
 
-
 boolean ButtonState = false;
 boolean LoadState = false;
-unsigned int Led_Status;
 
+Led OnBoardLed(ESPLED);
 
 void updateStatePins(void)
 {
-    if(LoadState)
-    {
+  switch (LoadState)
+  {
+    case true:
       digitalWrite(Load, ON);
-      analogWrite(ESPLED, ESPLED_ON);
-      Led_Status = ESPLED_ON;
-    }else
-    {
+      OnBoardLed.SetOn();
+    break;
+
+    case false:
       digitalWrite(Load, OFF);
-      analogWrite(ESPLED, ESPLED_OFF);
-      Led_Status = ESPLED_OFF;
-    }
+      OnBoardLed.SetOff();
+    break;
+  
+  default:
+    digitalWrite(Load, OFF);
+    OnBoardLed.SetOff();
+    break;
+  }
+}
+
+void HardwareSetup()
+{
+  pinMode(Load, OUTPUT);
+  pinMode(Button, INPUT_PULLUP);
+  digitalWrite(Load, LOW);
+  Serial.begin(115200);
 }

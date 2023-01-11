@@ -1,16 +1,13 @@
 #include <project.h>
 
 
+float Temp;
+unsigned int Humidity;
+
 void setup() 
 {
-  pinMode(ESPLED, OUTPUT);
-  pinMode(Load, OUTPUT);
-  analogWrite(ESPLED, ESPLED_OFF);
-  Led_Status = ESPLED_OFF;
-  pinMode(Button, INPUT);
-  digitalWrite(Load, LOW);
+  HardwareSetup();
 
-  Serial.begin(115200);
   
   EEPROM.begin(100);
   EEPROM.get(0, lp);
@@ -27,16 +24,7 @@ void setup()
     delay(500);
     Serial.print(".");
     cnt++;
-    if(Led_Status == 0)
-    {
-      analogWrite(ESPLED, ESPLED_ON);
-      Led_Status = ESPLED_ON;
-    }
-    else
-    {
-      analogWrite(ESPLED, ESPLED_OFF);
-      Led_Status = ESPLED_OFF;
-    }
+    OnBoardLed.Toggle();
     if(cnt > 50)
     {
       Serial.println("Portal start");
@@ -56,8 +44,7 @@ void setup()
       }
     }
 
-  analogWrite(ESPLED, ESPLED_OFF);
-  Led_Status = ESPLED_OFF;
+  OnBoardLed.SetOff();
   Serial.println();
   Serial.print("Connected! Local IP: ");
 

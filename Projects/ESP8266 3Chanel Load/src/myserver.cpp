@@ -45,15 +45,13 @@ void action()
     if(ButtonState == true)
     {
       ButtonState = false;
-      analogWrite(ESPLED, ESPLED_OFF);
-      Led_Status = ESPLED_OFF;
+      OnBoardLed.SetOff();
       digitalWrite(Load, OFF);
     }
     else
     {
       ButtonState = true;
-      analogWrite(ESPLED, ESPLED_ON);
-      Led_Status = ESPLED_ON;
+      OnBoardLed.SetOn();
       digitalWrite(Load, ON);
     }
     LoadState = ButtonState;
