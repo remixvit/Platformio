@@ -12,3 +12,5 @@ extern void build();
 extern void action();
 extern void buildWiFi(GyverPortal& p);
 extern void actionWiFi(GyverPortal& p);
+extern bool WifiConnect();
+extern void WifiMeneger();

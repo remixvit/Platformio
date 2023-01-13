@@ -2,6 +2,8 @@
 #define HDC1080ADRR 0x40
 
 ClosedCube_HDC1080 hdc1080;
+float HDC_Temp;
+int HDC_Humi;
 
 void HDC1080_Init()
 {

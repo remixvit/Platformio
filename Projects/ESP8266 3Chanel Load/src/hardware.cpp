@@ -2,28 +2,24 @@
 
 boolean ButtonState = false;
 boolean LoadState = false;
+bool Termostat_Set = false;
+int Termostat_Set_Temp = 25;
 
 Led OnBoardLed(ESPLED);
 
 void updateStatePins(void)
 {
-  switch (LoadState)
+  if(LoadState)
   {
-    case true:
-      digitalWrite(Load, ON);
-      OnBoardLed.SetOn();
-    break;
-
-    case false:
-      digitalWrite(Load, OFF);
-      OnBoardLed.SetOff();
-    break;
-  
-  default:
+    digitalWrite(Load, ON);
+    OnBoardLed.SetOn();
+  }
+  else
+  {
     digitalWrite(Load, OFF);
     OnBoardLed.SetOff();
-    break;
   }
+
 }
 
 void HardwareSetup()
@@ -32,4 +28,7 @@ void HardwareSetup()
   pinMode(Button, INPUT_PULLUP);
   digitalWrite(Load, LOW);
   Serial.begin(115200);
+  Serial.println(" ");
+  EEPROM.begin(100);
+  HDC1080_Init();
 }

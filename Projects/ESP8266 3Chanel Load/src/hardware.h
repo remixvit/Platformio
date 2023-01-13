@@ -8,7 +8,8 @@
 
 extern boolean ButtonState;
 extern boolean LoadState;
-extern unsigned int Led_Status;
+extern bool Termostat_Set;
+extern int Termostat_Set_Temp;
 
 extern Led OnBoardLed;
 
