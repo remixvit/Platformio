@@ -17,5 +17,3 @@ extern void NameGenerator();
 extern void callback(char* topic, byte* payload, unsigned int length);
 extern void reconnect();
 extern void NameInit();
-extern void MQTTinit();
-extern void MQTTUpdate();

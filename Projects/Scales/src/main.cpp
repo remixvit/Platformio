@@ -1,26 +1,9 @@
-#include <Arduino.h>
+
+#include <project.h>
 #include <TFT_eSPI.h>
 #include <HX711_ADC.h>
-#if defined(ESP8266)|| defined(ESP32) || defined(AVR)
-#include <EEPROM.h>
-#endif
-
-#include <LittleFS.h>
-
-#include <GyverPortal.h>
-GyverPortal ui(&LittleFS); // для проверки файлов
-
-// конструктор страницы
-void build() {
-  GP.BUILD_BEGIN();
-  GP.THEME(GP_DARK);
-  GP.TITLE("Welcome! v3");
-  GP.BUILD_END();
-}
 
 
-const char* ssid = "CM-SK";
-const char* password = "internet2449226";
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -28,18 +11,20 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 
 HX711_ADC LoadCell(26, 25);
 
-const int calVal_eepromAdress = 0;
+const int calVal_eepromAdress = 70;
 unsigned long t = 0;
 
 void calibrate();
 
 void setup() 
 {
-  Serial.begin(115200);
+  HardwareSetup();
   tft.begin();
   tft.setRotation(3);
   tft.setTextFont(4);
   tft.fillScreen(TFT_BLACK);
+  Serial.print("MassRead: ");
+  Serial.println(String(Mass) + " Kg");
 
   tft.drawString("Weight Cell Start", 30, 10);
   pinMode(35, INPUT);
@@ -57,7 +42,6 @@ void setup()
   {
      // user set calibration value (float), initial value 1.0 may be used for this sketch
     float calibrationValue;
-    EEPROM.begin(512);
     EEPROM.get(calVal_eepromAdress, calibrationValue);
     LoadCell.setCalFactor(calibrationValue);
     tft.fillScreen(TFT_BLACK);
@@ -79,31 +63,7 @@ void setup()
   
   delay(2000);
 
-//-------------------------OTA-------------------------
-  tft.fillScreen(TFT_BLACK);
-  tft.setCursor(0, 0);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    tft.print(".");
-  }
-  tft.println(" ");
-  tft.println("WiFI Connected");
-  tft.println(WiFi.getHostname());
-  tft.println(WiFi.localIP());
-  delay(2000);
-  tft.fillScreen(TFT_BLACK);
-
-  // подключаем конструктор и запускаем
-  ui.attachBuild(build);
-  ui.start();
-  ui.enableOTA();
-
-  if (!LittleFS.begin()) Serial.println("FS Error");
-  ui.downloadAuto(true);
-
-  //-------------------------OTA-------------------------
+WifiMeneger();
 
   tft.setCursor(70, 0);
   tft.fillScreen(TFT_BLACK);

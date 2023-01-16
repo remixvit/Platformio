@@ -17,8 +17,8 @@ void build()
 {
   GP.BUILD_BEGIN(500);
   GP.THEME(GP_DARK);
-  GP.UPDATE("HDC_Temp, HDC_Humi, LedHeat, LedTermostat, HeatButton, TermostatButton, sld");
-  GP.PAGE_TITLE("ESP One Chanel", "tit");
+  GP.UPDATE("WeightLable");
+  GP.PAGE_TITLE("ESP32MASS", "tit");
 
   GP.UI_MENU("Menu", GP_RED);
   GP.UI_LINK("/", "Home");
@@ -31,18 +31,10 @@ void build()
   {
     GP.HR();
     GP.HR();
-    GP.BLOCK_TAB_BEGIN("Обогрев");
-    M_BOX(GP_JUSTIFY, GP.LABEL("Обогреватель"); M_BOX(GP_RIGHT, GP.SWITCH("HeatButton", ButtonState); GP.LED("LedHeat");););
-    M_BOX(GP_JUSTIFY, GP.LABEL("Термостат"); M_BOX(GP_RIGHT, GP.SWITCH("TermostatButton", Termostat_Set); GP.LED("LedTermostat");););
-    M_BOX(GP_JUSTIFY, GP.LABEL("Температура"); GP.SLIDER("sld", Termostat_Set_Temp, TERMOSTAT_MIN_TEMP, TERMOSTAT_MAX_TEMP, TERMOSTAT_STEP_TEMP););
-    GP.BLOCK_END();
-    GP.HR();
-
-    GP.HR();
-    GP.BLOCK_TAB_BEGIN("Мониторинг");
-    M_BOX(GP_JUSTIFY, GP.LABEL("Температура"); GP.LABEL("25,6*C", "HDC_Temp"););
-    M_BOX(GP_JUSTIFY, GP.LABEL("Влажность");   GP.LABEL("49%", "HDC_Humi"););
-    GP.PLOT_STOCK_DARK<2, PLOT_SIZE>("plot", names, dates, arr);
+    GP.BLOCK_TAB_BEGIN("Весы");
+    M_BOX(GP_JUSTIFY, GP.LABEL("Текуший вес:"); M_BOX(GP_RIGHT, GP.LABEL("0.0 Kg", "WeightLable");););
+    M_BOX(GP_JUSTIFY, GP.LABEL("Колличество:"); M_BOX(GP_JUSTIFY, GP.NUMBER("Count", "", 0); GP.BUTTON("CountMember", "Запомнить"););); 
+    M_BOX(GP_JUSTIFY, GP.BUTTON("TareButton", "Оттарить"););
     GP.BLOCK_END();
     GP.HR();
     GP.HR();
@@ -62,7 +54,20 @@ void build()
       GP.SUBMIT("Submit"); 
       GP.FORM_END();
     );
+    M_BOX(GP_RIGHT, GP.SYSTEM_INFO("1.0"););
     M_BOX(GP_RIGHT, GP.TITLE(DeviceName););
+    GP.BLOCK_END();
+
+
+    GP.HR();
+    GP.HR();
+    GP.BLOCK_TAB_BEGIN("Калибровка весов");
+    M_BOX
+    (
+      M_BOX(GP_CENTER, GP.LABEL("Уберите вес с весов!", "CalibrateMessage"););
+      M_BOX(GP_CENTER, GP_BUTTON("CalibrateButton", "Откалибровать"););
+      M_BOX(GP_CENTER, GP.NUMBER("CalibrationMass", "", 0); GP.BUTTON("CalibrationMemButton", "Запомнить"););
+    );
     GP.BLOCK_END();
     GP.HR();
     GP.HR();
@@ -90,41 +95,23 @@ void build()
 
 void action()
 {
-  if (ui.clickBool("HeatButton", ButtonState))
+  if (ui.click("TareButton"))
   {
-    if(ButtonState)
-    {
-      OnBoardLed.SetOn();
-      digitalWrite(Load, ON);
-    }
-    else
-    {
-      OnBoardLed.SetOff();
-      digitalWrite(Load, OFF);
-    }
+    OnBoardLed.Toggle();
+    Mass++;
   }
 
-  if (ui.clickBool("TermostatButton", Termostat_Set))
+  if(ui.update())
   {
-    if (Termostat_Set) Serial.println("Termostat On");
-    else Serial.println("Termostat Off");    
-  }
-
-  if (ui.clickInt("sld", Termostat_Set_Temp));
-     
-
-
-  if (ui.update())
-  {
-    if (ui.update("LedHeat")) ui.answer(LoadState);
-    if (ui.update("LedTermostat")) ui.answer(Termostat_Set);
-    String Output = String(HDC_Temp, 2) + "°C";
-    ui.updateString("HDC_Temp", Output);
-    Output = String(HDC_Humi) + "%";
-    ui.updateString("HDC_Humi", Output);
-    ui.updateInt("sld", Termostat_Set_Temp);
-    ui.updateInt("HeatButton", ButtonState);
-    ui.updateInt("TermostatButton", Termostat_Set);
+    if (ui.update("WeightLable"))
+    {
+      String MassString = "";
+      MassString += String(Mass) + " Kg";
+      ui.answer(MassString);  
+      Serial.print("Mass: ");
+      Serial.println(MassString);
+    }
+    
   }
 }
 
@@ -211,13 +198,14 @@ void WifiMeneger()
   }
   else
   {
+    if (!LittleFS.begin()) Serial.println("FS Error");
     ui.attachBuild(build);
-    ui.start();
     ui.attach(action);
+    ui.start();
+
     ui.enableOTA();   // без пароля
 
-    if (!LittleFS.begin()) Serial.println("FS Error");
-    //ui.downloadAuto(true);
+    
   }
 
 }

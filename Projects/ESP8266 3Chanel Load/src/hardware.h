@@ -10,9 +10,15 @@ extern boolean ButtonState;
 extern boolean LoadState;
 extern bool Termostat_Set;
 extern int Termostat_Set_Temp;
+extern int SystemTemp;
 
 extern Led OnBoardLed;
+//extern Scheduler TimeMeneger;
+//extern Task TermostatCheck;
+
 
 
 extern void updateStatePins(void);
 extern void HardwareSetup();
+extern void TermostatWork();
+extern void PinLog();

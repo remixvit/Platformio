@@ -2,7 +2,7 @@
 
 #define NAMELENGHT 10
 
-String DeviceName = "EspOneChanel_";
+String DeviceName = "Esp32_";
 
 const char* mqtt_server = "m2.wqtt.ru";
 const int mqtt_port = 11799;
@@ -101,13 +101,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
   {
       if(data_pay == "ON" || data_pay == "1")
       {
-         ButtonState = true;
+         LoadState = true;
+         client.publish(Relay_status_topic.c_str(), String("1").c_str(), retain_flag);
       }
 
       if(data_pay == "OFF" || data_pay == "0")
       {
-         ButtonState = false;
+         LoadState = false;
+         client.publish(Relay_status_topic.c_str(), String("0").c_str(), retain_flag);
       }
+
+      updateStatePins();
 
   }
 
@@ -116,11 +120,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if(data_pay == "ON" || data_pay == "1")
     {
       Termostat_Set = true;
+      client.publish(Termostat_state_topic.c_str(), String("1").c_str(), retain_flag);
     }
 
     if(data_pay == "OFF" || data_pay == "0")
     {
       Termostat_Set = false;
+      client.publish(Termostat_state_topic.c_str(), String("0").c_str(), retain_flag);
     }
   }
 
@@ -183,19 +189,4 @@ void NameInit()
     Serial.println(DeviceName);
     TopicGenerator();
 
-}
-
-void MQTTinit()
-{
-  client.setServer(mqtt_server, mqtt_port);
-  client.setCallback(callback);
-}
-
-void MQTTUpdate()
-{
-  client.publish(Relay_status_topic.c_str(), String(LoadState).c_str(), retain_flag);  
-  client.publish(Termostat_state_topic.c_str(), String(Termostat_Set).c_str(), retain_flag);
-  client.publish(Termostat_tempset_topic.c_str(), String(Termostat_Set_Temp).c_str(), retain_flag);
-  client.publish(Termometr_topic.c_str(), String(HDC_Temp).c_str(), retain_flag);
-  client.publish(Humidity_topic.c_str(), String(HDC_Humi).c_str(), retain_flag);
 }
