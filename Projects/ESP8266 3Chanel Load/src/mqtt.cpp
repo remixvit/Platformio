@@ -116,11 +116,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if(data_pay == "ON" || data_pay == "1")
     {
       Termostat_Set = true;
+      ButtonState = false;
+      if(TermostatState == TERMOSTATSTATE_OFF)
+      {
+        TermostatState = TERMOSTATSTATE_START;
+      }      
     }
 
     if(data_pay == "OFF" || data_pay == "0")
     {
       Termostat_Set = false;
+      TermostatState = TERMOSTATSTATE_STOP;
     }
   }
 

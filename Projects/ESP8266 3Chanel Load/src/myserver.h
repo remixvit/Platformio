@@ -14,3 +14,4 @@ extern void buildWiFi(GyverPortal& p);
 extern void actionWiFi(GyverPortal& p);
 extern bool WifiConnect();
 extern void WifiMeneger();
+extern void AddToPlot();

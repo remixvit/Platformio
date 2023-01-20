@@ -8,7 +8,7 @@ int HDC_Humi;
 void HDC1080_Init()
 {
     hdc1080.begin(HDC1080ADRR);
-
+	hdc1080.setResolution(HDC1080_RESOLUTION_14BIT, HDC1080_RESOLUTION_14BIT);
 	Serial.print("Manufacturer ID=0x");
 	Serial.println(hdc1080.readManufacturerId(), HEX); // 0x5449 ID of Texas Instruments
 	Serial.print("Device ID=0x");
@@ -17,10 +17,18 @@ void HDC1080_Init()
 
 void HDC_GetData()
 {
-	HDC_Temp = hdc1080.readTemperature();
-	HDC_Humi = hdc1080.readHumidity();
-	SystemTemp = (int)(HDC_Temp + 0.5);
-	Serial.println("Temp: " + String(HDC_Temp)+ "*C");
-	Serial.println("Humidity: " + String(HDC_Humi)+ "%");
-	Serial.println("System Temp: " + String(SystemTemp)+ "*C");
+	if(hdc1080.readManufacturerId() == 0x5449)
+	{
+		HDC_Temp = hdc1080.readTemperature();
+		HDC_Humi = hdc1080.readHumidity();
+		SystemTemp = (int)(HDC_Temp + 0.5);
+		Serial.println("Temp: " + String(HDC_Temp)+ "*C");
+		Serial.println("Humidity: " + String(HDC_Humi)+ "%");
+		Serial.println("System Temp: " + String(SystemTemp)+ "*C");
+	}
+	else
+	{
+		hdc1080.begin(HDC1080ADRR);
+	}
+	
 }

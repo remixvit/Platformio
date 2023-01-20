@@ -1,0 +1,15 @@
+///One Chanel ESP8266 Termostat MQTT Settings List
+
+/Relay/State
+/Relay/Status
+/Termometr
+/Humidity
+/Termostat/State
+/Termostat/TempSet
+/Termostat/Status
+
+///One Chanel ESP8266 Termostat Devise List
+
+Office:
+	EspOneChanel_i3iuyuo  -- Director
+	EspOneChanel_iromjex  -- Logistic

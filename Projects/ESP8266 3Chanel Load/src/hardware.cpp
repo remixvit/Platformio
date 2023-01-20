@@ -5,7 +5,9 @@ boolean ButtonState = false;
 boolean LoadState = false;
 bool Termostat_Set = false;
 int Termostat_Set_Temp = 25;
-int TermostatHyst = 2;
+int TermostatHystUp = 2;
+int TermostatHystDown = 1;
+int TermostatState = 3;
 int SystemTemp;
 
 Led OnBoardLed(ESPLED);
@@ -41,24 +43,58 @@ void TermostatWork()
 {
   if(Termostat_Set)
   {
-    if(SystemTemp < (Termostat_Set_Temp + TermostatHyst))
+    if(TermostatState == TERMOSTATSTATE_COLD) 
     {
-      LoadState = true;
+      if(SystemTemp < (Termostat_Set_Temp - TermostatHystDown)) // Heaat initient
+      {
+        TermostatState = TERMOSTATSTATE_HEAT;
+        LoadState = true;
+      }
+
     }
-    else
+
+    if(TermostatState == TERMOSTATSTATE_HEAT) 
     {
+      if(SystemTemp > (Termostat_Set_Temp + TermostatHystUp)) // Cooling initient
+      {
+        TermostatState = TERMOSTATSTATE_COLD;
+        LoadState = false;
+      }
+      else
+      {
+        if(LoadState == false)
+        {
+          LoadState = true;
+        }
+      }
+            
+    }
+
+    if(TermostatState == TERMOSTATSTATE_START) 
+    {
+      
       LoadState = false;
+      TermostatState = TERMOSTATSTATE_HEAT;
+            
     }
   }
   else
   {
-    if(ButtonState)
+    if(TermostatState == TERMOSTATSTATE_STOP)
     {
-      LoadState = true;
+      LoadState = false;
+      TermostatState = TERMOSTATSTATE_OFF;      
     }
     else
     {
-      LoadState = false;
+      if(ButtonState)
+      {
+        LoadState = true;
+      }
+      else
+      {
+        LoadState = false;
+      }      
     }
   }
 }
@@ -77,6 +113,6 @@ void PinLog()
   Out = "Termostat set temp: " + String(Termostat_Set_Temp) + "*C";
   Serial.println(Out);
 
-  Out = "Termostat Hysteresis: " + String(TermostatHyst) + "*C";
+  Out = "Termostat Hysteresis: " + String(TermostatHystUp) + "*C";
   Serial.println(Out);
 }

@@ -6,7 +6,8 @@ Task TermostatCheck(3000, TASK_FOREVER, &TermostatWork, &TimeMeneger, true);
 Task HDC1080Check(5000, TASK_FOREVER, &HDC_GetData, &TimeMeneger, true);
 Task PinStateSet(1000, TASK_FOREVER, &updateStatePins, &TimeMeneger, true);
 Task PinStateLog(5000, TASK_FOREVER, &PinLog, &TimeMeneger, true);
-Task MQTTUpdateCheck(3000, TASK_FOREVER, &MQTTUpdate, &TimeMeneger, true); 
+Task MQTTUpdateCheck(3000, TASK_FOREVER, &MQTTUpdate, &TimeMeneger, true);
+Task PlotUpdate(30000, TASK_FOREVER, &AddToPlot, &TimeMeneger, true);
 
 void setup() 
 {
