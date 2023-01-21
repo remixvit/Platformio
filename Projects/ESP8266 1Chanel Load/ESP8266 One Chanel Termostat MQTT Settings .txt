@@ -1,0 +1,11 @@
+///One Chanel ESP8266 Relay MQTT Settings List
+
+/Relay/State
+/Relay/Status
+/Termometr
+/Humidity
+
+///One Chanel ESP8266 Relay Devise List
+
+Cabinet:
+	EspOneChanel_bylfse2 -- Light
